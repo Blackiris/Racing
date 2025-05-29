@@ -38,6 +38,7 @@ public:
     virtual void end_draw() = 0;
     virtual void clear_background() = 0;
     virtual void draw_sprites(std::list<Sprite*> sprites) = 0;
+    virtual void draw_sprite(const Sprite* sprite) = 0;
     virtual void draw_rectangle(int posX, int posY, int width, int height, BackColor color) = 0;
     virtual void draw_car_info(const Car& car) = 0;
     virtual void close() = 0;

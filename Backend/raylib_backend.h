@@ -21,6 +21,7 @@ public:
     void end_draw() override;
     void clear_background() override;
     void draw_sprites(std::list<Sprite*> sprites) override;
+    void draw_sprite(const Sprite* sprite) override;
     void draw_rectangle(int posX, int posY, int width, int height, BackColor color) override;
     void draw_car_info(const Car& car) override;
     void close() override;

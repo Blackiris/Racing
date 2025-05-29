@@ -14,6 +14,18 @@ Renderer::Renderer(IBackend &backend): m_backend(backend) {
     cam_height = (cam_dist_to_screen+max_dist_display_road) * (backend.screenHeight/2)/max_dist_display_road;
 }
 
+void Renderer::draw_cars(std::list<Car> cars, const unsigned int &z_advance) {
+    for (Car car : cars) {
+        draw_car(car, z_advance);
+    }
+}
+
+void Renderer::draw_car(Car car, const unsigned int &z_advance) {
+    int screen_y = get_screeny_from_zground(car.get_zadvance_m() - z_advance);
+    Sprite car_sprite = Sprite(m_backend.screenWidth/2 + car.get_xdelta() - car.get_width()/2, screen_y-car.get_height(), car.get_image());
+    //std::list<Sprite*> sprites = {&car_sprite};
+    m_backend.draw_sprite(&car_sprite);
+}
 
 void Renderer::draw_ground(const Level& level, const unsigned int &z_advance) {
     m_backend.clear_background();
@@ -41,6 +53,10 @@ void Renderer::draw_ground(const Level& level, const unsigned int &z_advance) {
         previous_delta = draw_ground_line(level, section, z_advance, z_ground, i, previous_section_delta, previous_section_delta_diff, previous_section_screen_y);
         previous_delta_diff = previous_delta - previous_delta_bis;
     }
+}
+
+int Renderer::get_screeny_from_zground(const unsigned int &z_ground) {
+    return m_backend.screenHeight - z_ground*cam_height/(z_ground+cam_dist_to_screen);
 }
 
 float Renderer::draw_ground_line(const Level& level, const RoadSection &section, const unsigned int &z_advance, const int &z_ground, const unsigned int &screen_y,

@@ -16,10 +16,8 @@ int main()
     RayLibBackend backend = RayLibBackend();
     backend.init_window(screenWidth, screenHeight);
     Renderer renderer = Renderer(backend);
-    Sprite car_sprite = Sprite(50, 400, "resources/car.png");
-    std::list<Sprite*> sprites = {&car_sprite};
 
-    Car car = Car();
+    Car car = Car("resources/car.png");
     Level level = Level(4, {
         RoadSection(000, 0),
         RoadSection(300, 2),
@@ -43,17 +41,16 @@ int main()
             car.add_zspeed(1);
         }
         if (backend.isKeyDown(DOWN)) {
-            car.add_zspeed(-1);
+            car.add_zspeed(-3);
         }
-        RoadSection roadSection = LevelUtil::findRoadSection(level, car.get_zadvance());
+        RoadSection roadSection = LevelUtil::findRoadSection(level, car.get_zadvance_m());
         car.add_xdelta((float)-roadSection.angle*car.get_zspeed()/500);
         car.update_zadvance();
 
-        car_sprite.x = screenWidth/2 + car.get_xdelta() - car.get_width();
 
         backend.begin_draw();
-        renderer.draw_ground(level, car.get_zadvance());
-        backend.draw_sprites(sprites);
+        renderer.draw_ground(level, car.get_zadvance_m()-10);
+        renderer.draw_cars({car}, car.get_zadvance_m()-10);
         backend.draw_car_info(car);
         backend.end_draw();
     }

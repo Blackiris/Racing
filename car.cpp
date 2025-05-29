@@ -1,6 +1,10 @@
 #include "car.h"
 
-Car::Car(): x_delta(0), z_advance(0), z_speed(0), width(80) {}
+Car::Car(std::string image): m_image(image), x_delta(0), z_advance_cm(1000), z_speed(0), width(80), height(41) {}
+
+std::string Car::get_image() const {
+    return m_image;
+}
 
 float Car::get_xdelta() const {
     return x_delta;
@@ -21,14 +25,18 @@ void Car::add_zspeed(int to_add) {
     }
 }
 
-unsigned int Car::get_zadvance() const {
-    return z_advance/100;
+unsigned int Car::get_zadvance_m() const {
+    return z_advance_cm/100;
 }
 
 void Car::update_zadvance() {
-    z_advance += z_speed;
+    z_advance_cm += z_speed;
 }
 
 int Car::get_width() const {
     return width;
+}
+
+int Car::get_height() const {
+    return height;
 }

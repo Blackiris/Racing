@@ -1,15 +1,7 @@
 #include "raylib_backend.h"
-#include "../levelutil.h"
 
 RayLibBackend::RayLibBackend() {}
 
-int cam_dist_to_screen = 50;
-int max_dist_display_road = 600;
-int cam_height;
-int lane_width = 150;
-int road_curve_constant = 5000;
-
-#define LIGHTGREEN  CLITERAL(Color){ 9, 168, 42, 255 }
 
 
 void RayLibBackend::init_window(const int &screenWidth, const int &screenHeight) {
@@ -17,8 +9,6 @@ void RayLibBackend::init_window(const int &screenWidth, const int &screenHeight)
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
     SetTargetFPS(60);
-
-    cam_height = (cam_dist_to_screen+max_dist_display_road) * (screenHeight/2)/max_dist_display_road;
 }
 
 bool RayLibBackend::should_close() {
@@ -33,6 +23,10 @@ void RayLibBackend::end_draw() {
     EndDrawing();
 }
 
+void RayLibBackend::clear_background() {
+    ClearBackground(SKYBLUE);
+}
+
 void RayLibBackend::close() {
     CloseWindow();
 }
@@ -44,67 +38,15 @@ void RayLibBackend::draw_sprites(std::list<Sprite*> sprites) {
     }
 }
 
+void RayLibBackend::draw_rectangle(int posX, int posY, int width, int height, BackColor color) {
+    DrawRectangle(posX, posY, width, height, Color(color.r, color.g, color.b, color.a));
+}
+
 void RayLibBackend::draw_car_info(const Car& car) {
     DrawText(("Speed: " + std::to_string(car.get_zspeed())).c_str(), 50, 20, 20, LIGHTGRAY);
 }
 
-void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advance) {
-    ClearBackground(SKYBLUE);
 
-    float previous_delta = 0, previous_delta_bis = 0, previous_section_delta = 0;
-    float previous_delta_diff = 0, previous_section_delta_diff = 0;
-    unsigned int horizon_y = screenHeight/2;
-    unsigned int previous_section_screen_y = screenHeight;
-    RoadSection previous_section;
-
-
-    for (unsigned int i = screenHeight-1; i >= horizon_y; i--) {
-        int h_screen_from_ground = screenHeight - i;
-        int z_ground = cam_dist_to_screen*h_screen_from_ground / (cam_height-h_screen_from_ground);
-        int z_ground_absolute = z_ground + z_advance;
-        RoadSection section = LevelUtil::findRoadSection(level, z_ground_absolute);
-        if (previous_section.z_begin != section.z_begin) {
-            previous_section = section;
-            previous_section_delta = previous_delta;
-            previous_section_delta_diff = previous_delta_diff;
-            previous_section_screen_y = i+1;
-        }
-
-        previous_delta_bis = previous_delta;
-        previous_delta = draw_ground_line(level, section, z_advance, z_ground, i, previous_section_delta, previous_section_delta_diff, previous_section_screen_y);
-        previous_delta_diff = previous_delta - previous_delta_bis;
-    }
-}
-
-float RayLibBackend::draw_ground_line(const Level& level, const RoadSection &section, const unsigned int &z_advance, const int &z_ground, const unsigned int &screen_y,
-                                    const float &previous_section_delta, const float& previous_section_delta_diff, const unsigned int &previous_section_screen_y) {
-    int z_ground_absolute = z_ground + z_advance;
-    int road_width = lane_width * level.nb_lanes;
-    int w = road_width - road_width*z_ground / (z_ground + cam_dist_to_screen);
-    Color grass_color = z_ground_absolute % 150 < 75 ? GREEN : LIGHTGREEN;
-
-    DrawRectangle(0, screen_y, screenWidth, 1, grass_color);
-
-    int z_begin_section = z_ground_absolute - std::max(section.z_begin, z_advance);
-    float delta = previous_section_delta;
-    delta += previous_section_delta_diff * (previous_section_screen_y - screen_y);
-
-    delta += (float)section.angle*(z_begin_section*z_begin_section)/road_curve_constant;
-    DrawRectangle((screenWidth-w)/2+delta, screen_y, w, 1, GRAY);
-
-    // Draw lanes
-    if (z_ground_absolute % 80 < 30) {
-        for (unsigned int i=0; i<level.nb_lanes-1; i++) {
-            int draw_lane_delta = (i+1) * w / level.nb_lanes -w/2;
-
-            int w_middle = (float)w*0.1/level.nb_lanes;
-            DrawRectangle((screenWidth-w_middle)/2+delta+draw_lane_delta, screen_y, w_middle, 1, WHITE);
-        }
-
-    }
-
-    return delta;
-}
 
 Texture2D RayLibBackend::getTexture(const std::string &path) {
     if (pathToTexture.contains(path)) {

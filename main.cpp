@@ -3,6 +3,7 @@
 #include "car.h"
 #include "level.h"
 #include "levelutil.h"
+#include "renderer.h"
 
 using namespace std;
 
@@ -14,6 +15,7 @@ int main()
 
     RayLibBackend backend = RayLibBackend();
     backend.init_window(screenWidth, screenHeight);
+    Renderer renderer = Renderer(backend);
     Sprite car_sprite = Sprite(50, 400, "resources/car.png");
     std::list<Sprite*> sprites = {&car_sprite};
 
@@ -50,7 +52,7 @@ int main()
         car_sprite.x = screenWidth/2 + car.get_xdelta() - car.get_width();
 
         backend.begin_draw();
-        backend.draw_ground(level, car.get_zadvance());
+        renderer.draw_ground(level, car.get_zadvance());
         backend.draw_sprites(sprites);
         backend.draw_car_info(car);
         backend.end_draw();

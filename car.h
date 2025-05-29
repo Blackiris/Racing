@@ -5,8 +5,8 @@ class Car
 {
 public:
     Car();
-    int get_xdelta() const;
-    void add_xdelta(int to_add);
+    float get_xdelta() const;
+    void add_xdelta(float to_add);
     unsigned int get_zadvance() const;
     int get_zspeed() const;
     void add_zspeed(int to_add);
@@ -14,7 +14,7 @@ public:
     int get_width() const ;
 
 private:
-    int x_delta;
+    float x_delta;
     unsigned int z_advance;
     int z_speed;
     int width;

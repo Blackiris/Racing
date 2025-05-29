@@ -38,12 +38,7 @@ void RayLibBackend::close() {
 }
 
 
-void RayLibBackend::draw_back_sprites(const unsigned int &y_advance, const Level& level, std::list<Sprite*> sprites) {
-    ClearBackground(SKYBLUE);
-
-    draw_ground(level, y_advance);
-
-    // draw sprites
+void RayLibBackend::draw_sprites(std::list<Sprite*> sprites) {
     for (Sprite* sprite: sprites) {
         DrawTexture(getTexture(sprite->image), sprite->x, sprite->y, WHITE);
     }
@@ -54,6 +49,8 @@ void RayLibBackend::draw_car_info(const Car& car) {
 }
 
 void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advance) {
+    ClearBackground(SKYBLUE);
+
     float previous_delta = 0, previous_delta_bis = 0, previous_section_delta = 0;
     float previous_delta_diff = 0, previous_section_delta_diff = 0;
     unsigned int horizon_y = screenHeight/2;
@@ -97,10 +94,10 @@ float RayLibBackend::draw_ground_line(const Level& level, const RoadSection &sec
 
     // Draw lanes
     if (z_ground_absolute % 80 < 30) {
-        for (int i=0; i<level.nb_lanes-1; i++) {
+        for (unsigned int i=0; i<level.nb_lanes-1; i++) {
             int draw_lane_delta = (i+1) * w / level.nb_lanes -w/2;
 
-            int w_middle = w*0.1/level.nb_lanes;
+            int w_middle = (float)w*0.1/level.nb_lanes;
             DrawRectangle((screenWidth-w_middle)/2+delta+draw_lane_delta, screen_y, w_middle, 1, WHITE);
         }
 

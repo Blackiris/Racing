@@ -2,6 +2,7 @@
 #include "Backend/raylib_backend.h"
 #include "car.h"
 #include "level.h"
+#include "levelutil.h"
 
 using namespace std;
 
@@ -15,7 +16,6 @@ int main()
     backend.init_window(screenWidth, screenHeight);
     Sprite car_sprite = Sprite(50, 400, "resources/car.png");
     std::list<Sprite*> sprites = {&car_sprite};
-    car_sprite.x = 80;
 
     Car car = Car();
     Level level = Level(4, {
@@ -43,12 +43,15 @@ int main()
         if (backend.isKeyDown(DOWN)) {
             car.add_zspeed(-1);
         }
+        RoadSection roadSection = LevelUtil::findRoadSection(level, car.get_zadvance());
+        car.add_xdelta((float)-roadSection.angle*car.get_zspeed()/500);
         car.update_zadvance();
 
         car_sprite.x = screenWidth/2 + car.get_xdelta() - car.get_width();
 
         backend.begin_draw();
-        backend.draw_back_sprites(car.get_zadvance(), level, sprites);
+        backend.draw_ground(level, car.get_zadvance());
+        backend.draw_sprites(sprites);
         backend.draw_car_info(car);
         backend.end_draw();
     }

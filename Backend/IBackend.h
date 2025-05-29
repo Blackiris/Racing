@@ -24,7 +24,8 @@ public:
     virtual bool should_close() = 0;
     virtual void begin_draw() = 0;
     virtual void end_draw() = 0;
-    virtual void draw_back_sprites(const unsigned int &z_advance, const Level& level, std::list<Sprite*> sprites) = 0;
+    virtual void draw_ground(const Level& level, const unsigned int &z_advance) = 0;
+    virtual void draw_sprites(std::list<Sprite*> sprites) = 0;
     virtual void draw_car_info(const Car& car) = 0;
     virtual void close() = 0;
 

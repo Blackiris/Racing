@@ -1,12 +1,12 @@
 #include "car.h"
 
-Car::Car(): x_delta(0), z_advance(0), z_speed(0), width(30) {}
+Car::Car(): x_delta(0), z_advance(0), z_speed(0), width(80) {}
 
-int Car::get_xdelta() const {
+float Car::get_xdelta() const {
     return x_delta;
 }
 
-void Car::add_xdelta(int to_add) {
+void Car::add_xdelta(float to_add) {
     x_delta += to_add;
 }
 
@@ -22,7 +22,7 @@ void Car::add_zspeed(int to_add) {
 }
 
 unsigned int Car::get_zadvance() const {
-    return z_advance/10;
+    return z_advance/100;
 }
 
 void Car::update_zadvance() {

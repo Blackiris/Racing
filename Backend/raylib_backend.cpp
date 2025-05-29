@@ -5,8 +5,10 @@ RayLibBackend::RayLibBackend() {}
 int cam_dist_to_screen = 50;
 int max_dist_display_road = 600;
 int cam_height;
-int road_width = 300;
+int road_width = 400;
 int road_curve_constant = 5000;
+
+#define LIGHTGREEN  CLITERAL(Color){ 9, 168, 42, 255 }
 
 
 void RayLibBackend::init_window(const int &screenWidth, const int &screenHeight) {
@@ -16,6 +18,10 @@ void RayLibBackend::init_window(const int &screenWidth, const int &screenHeight)
     SetTargetFPS(60);
 
     cam_height = (cam_dist_to_screen+max_dist_display_road) * (screenHeight/2)/max_dist_display_road;
+}
+
+bool RayLibBackend::should_close() {
+    return WindowShouldClose();
 }
 
 void RayLibBackend::begin_draw() {
@@ -43,7 +49,7 @@ void RayLibBackend::draw_back_sprites(const unsigned int &y_advance, const Level
 }
 
 void RayLibBackend::draw_car_info(const Car& car) {
-    DrawText(("Speed: " + std::to_string(car.get_yspeed())).c_str(), 50, 20, 20, LIGHTGRAY);
+    DrawText(("Speed: " + std::to_string(car.get_zspeed())).c_str(), 50, 20, 20, LIGHTGRAY);
 }
 
 void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advance) {
@@ -53,7 +59,7 @@ void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advanc
     unsigned int previous_section_screen_y = screenHeight;
     RoadSection previous_section;
 
-    DrawRectangle(0, horizon_y, screenWidth, screenHeight-horizon_y, GREEN);
+
     for (unsigned int i = screenHeight-1; i >= horizon_y; i--) {
         int h_screen_from_ground = screenHeight - i;
         int z_ground = cam_dist_to_screen*h_screen_from_ground / (cam_height-h_screen_from_ground);
@@ -76,16 +82,21 @@ float RayLibBackend::draw_ground_line(const RoadSection &section, const unsigned
                                     const float &previous_section_delta, const float& previous_section_delta_diff, const unsigned int &previous_section_screen_y) {
     int z_ground_absolute = z_ground + z_advance;
     int w = road_width - road_width*z_ground / (z_ground + cam_dist_to_screen);
-    Color road_color = z_ground_absolute % 80 < 40 ? LIGHTGRAY : GRAY;
+    Color grass_color = z_ground_absolute % 150 < 75 ? GREEN : LIGHTGREEN;
 
-
+    DrawRectangle(0, screen_y, screenWidth, 1, grass_color);
 
     int z_begin_section = z_ground_absolute - std::max(section.z_begin, z_advance);
     float delta = previous_section_delta;
     delta += previous_section_delta_diff * (previous_section_screen_y - screen_y);
 
     delta += (float)section.angle*(z_begin_section*z_begin_section)/road_curve_constant;
-    DrawRectangle((screenWidth-w)/2+delta, screen_y, w, 1, road_color);
+    DrawRectangle((screenWidth-w)/2+delta, screen_y, w, 1, GRAY);
+
+    if (z_ground_absolute % 80 < 30) {
+        int w_middle = w*0.05;
+        DrawRectangle((screenWidth-w_middle)/2+delta, screen_y, w_middle, 1, WHITE);
+    }
 
     return delta;
 }
@@ -109,4 +120,24 @@ Texture2D RayLibBackend::getTexture(const std::string &path) {
         pathToTexture.insert({path, texture2D});
         return texture2D;
     }
+}
+
+bool RayLibBackend::isKeyDown(const KeyName &keyname) {
+    bool res = false;
+    switch(keyname) {
+    case UP:
+        res = IsKeyDown(KEY_UP);
+        break;
+    case DOWN:
+        res = IsKeyDown(KEY_DOWN);
+        break;
+    case LEFT:
+        res = IsKeyDown(KEY_LEFT);
+        break;
+    case RIGHT:
+        res = IsKeyDown(KEY_RIGHT);
+        break;
+    }
+
+    return res;
 }

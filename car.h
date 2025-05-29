@@ -7,16 +7,16 @@ public:
     Car();
     int get_xdelta() const;
     void add_xdelta(int to_add);
-    unsigned int get_yadvance() const;
-    int get_yspeed() const;
-    void add_yspeed(int to_add);
-    void update_yadvance();
+    unsigned int get_zadvance() const;
+    int get_zspeed() const;
+    void add_zspeed(int to_add);
+    void update_zadvance();
     int get_width() const ;
 
 private:
     int x_delta;
-    unsigned int y_advance;
-    int y_speed;
+    unsigned int z_advance;
+    int z_speed;
     int width;
 };
 

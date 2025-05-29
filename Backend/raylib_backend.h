@@ -21,11 +21,14 @@ private:
 public:
     RayLibBackend();
     void init_window(const int &screenWidth, const int &screenHeight) override;
+    bool should_close() override;
     void begin_draw() override;
     void end_draw() override;
     void draw_back_sprites(const unsigned int &z_advance, const Level& level, std::list<Sprite*> sprites) override;
     void draw_car_info(const Car& car) override;
     void close() override;
+
+    bool isKeyDown(const KeyName &keyname) override;
 };
 
 #endif // RAYLIB_BACKEND_H

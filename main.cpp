@@ -1,24 +1,10 @@
-#include <iostream>
 
 #include "Backend/raylib_backend.h"
 #include "car.h"
 #include "level.h"
-#include "raylib.h"
 
 using namespace std;
 
-void drawScreen(const int screenWidth, const int screenHeight, Texture2D &carTexture)
-{
-    BeginDrawing();
-
-    ClearBackground(SKYBLUE);
-    DrawText("Congrats! You created your first window!", 150, 200, 20, LIGHTGRAY);
-    DrawRectangle(screenWidth / 4 * 2 - 60, 100, 120, 60, RED);
-    DrawTexture(carTexture, screenWidth/2 - carTexture.width/2, screenHeight/2 - carTexture.height/2, WHITE);
-
-
-    EndDrawing();
-}
 
 int main()
 {
@@ -42,27 +28,27 @@ int main()
     });
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!backend.should_close())    // Detect window close button or ESC key
     {
-        if (IsKeyDown(KEY_LEFT)) {
+        if (backend.isKeyDown(LEFT)) {
             car.add_xdelta(-2);
         }
-        if (IsKeyDown(KEY_RIGHT)) {
+        if (backend.isKeyDown(RIGHT)) {
             car.add_xdelta(2);
         }
 
-        if (IsKeyDown(KEY_UP)) {
-            car.add_yspeed(1);
+        if (backend.isKeyDown(UP)) {
+            car.add_zspeed(1);
         }
-        if (IsKeyDown(KEY_DOWN)) {
-            car.add_yspeed(-1);
+        if (backend.isKeyDown(DOWN)) {
+            car.add_zspeed(-1);
         }
-        car.update_yadvance();
+        car.update_zadvance();
 
         car_sprite.x = screenWidth/2 + car.get_xdelta() - car.get_width();
 
         backend.begin_draw();
-        backend.draw_back_sprites(car.get_yadvance(), level, sprites);
+        backend.draw_back_sprites(car.get_zadvance(), level, sprites);
         backend.draw_car_info(car);
         backend.end_draw();
     }

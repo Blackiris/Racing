@@ -1,11 +1,12 @@
 #include "raylib_backend.h"
+#include "../levelutil.h"
 
 RayLibBackend::RayLibBackend() {}
 
 int cam_dist_to_screen = 50;
 int max_dist_display_road = 600;
 int cam_height;
-int road_width = 400;
+int lane_width = 150;
 int road_curve_constant = 5000;
 
 #define LIGHTGREEN  CLITERAL(Color){ 9, 168, 42, 255 }
@@ -64,7 +65,7 @@ void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advanc
         int h_screen_from_ground = screenHeight - i;
         int z_ground = cam_dist_to_screen*h_screen_from_ground / (cam_height-h_screen_from_ground);
         int z_ground_absolute = z_ground + z_advance;
-        RoadSection section = findRoadSection(level, z_ground_absolute);
+        RoadSection section = LevelUtil::findRoadSection(level, z_ground_absolute);
         if (previous_section.z_begin != section.z_begin) {
             previous_section = section;
             previous_section_delta = previous_delta;
@@ -73,14 +74,15 @@ void RayLibBackend::draw_ground(const Level& level, const unsigned int &z_advanc
         }
 
         previous_delta_bis = previous_delta;
-        previous_delta = draw_ground_line(section, z_advance, z_ground, i, previous_section_delta, previous_section_delta_diff, previous_section_screen_y);
+        previous_delta = draw_ground_line(level, section, z_advance, z_ground, i, previous_section_delta, previous_section_delta_diff, previous_section_screen_y);
         previous_delta_diff = previous_delta - previous_delta_bis;
     }
 }
 
-float RayLibBackend::draw_ground_line(const RoadSection &section, const unsigned int &z_advance, const int &z_ground, const unsigned int &screen_y,
+float RayLibBackend::draw_ground_line(const Level& level, const RoadSection &section, const unsigned int &z_advance, const int &z_ground, const unsigned int &screen_y,
                                     const float &previous_section_delta, const float& previous_section_delta_diff, const unsigned int &previous_section_screen_y) {
     int z_ground_absolute = z_ground + z_advance;
+    int road_width = lane_width * level.nb_lanes;
     int w = road_width - road_width*z_ground / (z_ground + cam_dist_to_screen);
     Color grass_color = z_ground_absolute % 150 < 75 ? GREEN : LIGHTGREEN;
 
@@ -93,23 +95,18 @@ float RayLibBackend::draw_ground_line(const RoadSection &section, const unsigned
     delta += (float)section.angle*(z_begin_section*z_begin_section)/road_curve_constant;
     DrawRectangle((screenWidth-w)/2+delta, screen_y, w, 1, GRAY);
 
+    // Draw lanes
     if (z_ground_absolute % 80 < 30) {
-        int w_middle = w*0.05;
-        DrawRectangle((screenWidth-w_middle)/2+delta, screen_y, w_middle, 1, WHITE);
+        for (int i=0; i<level.nb_lanes-1; i++) {
+            int draw_lane_delta = (i+1) * w / level.nb_lanes -w/2;
+
+            int w_middle = w*0.1/level.nb_lanes;
+            DrawRectangle((screenWidth-w_middle)/2+delta+draw_lane_delta, screen_y, w_middle, 1, WHITE);
+        }
+
     }
 
     return delta;
-}
-
-RoadSection RayLibBackend::findRoadSection(const Level &level, const unsigned int &z) {
-    RoadSection section = level.road_sections.front();
-    for (RoadSection current_section : level.road_sections) {
-        if (current_section.z_begin > z) {
-            break;
-        }
-        section = current_section;
-    }
-    return section;
 }
 
 Texture2D RayLibBackend::getTexture(const std::string &path) {

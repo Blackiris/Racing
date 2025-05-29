@@ -11,7 +11,8 @@ add_executable(Racing main.cpp
     Backend/IBackend.h
     Backend/raylib_backend.h Backend/raylib_backend.cpp
     car.h car.cpp
-    level.h )
+    level.h
+    levelutil.h levelutil.cpp )
 target_link_libraries(${PROJECT_NAME} raylib)
 
 include(GNUInstallDirs)

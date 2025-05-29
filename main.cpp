@@ -18,7 +18,7 @@ int main()
     car_sprite.x = 80;
 
     Car car = Car();
-    Level level = Level({
+    Level level = Level(4, {
         RoadSection(000, 0),
         RoadSection(300, 2),
         RoadSection(1000, 0),

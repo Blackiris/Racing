@@ -9,6 +9,7 @@ struct RoadSection {
 };
 
 struct Level {
+    unsigned int nb_lanes = 1;
     std::list<RoadSection> road_sections;
 };
 

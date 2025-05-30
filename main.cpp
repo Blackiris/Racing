@@ -17,7 +17,7 @@ int main()
     backend.init_window(screenWidth, screenHeight);
     Renderer renderer = Renderer(backend);
 
-    Car car = Car("resources/car.png");
+    Car car("resources/car.png");
     Level level = Level(4, {
         RoadSection(000, 0),
         RoadSection(300, 2),
@@ -26,6 +26,10 @@ int main()
         RoadSection(1800, 0),
         RoadSection(2500, 1),
     });
+
+    Car car_npc("resources/car_npc.png");
+    car_npc.z_speed = 30;
+    car_npc.z_advance_cm = 10;
 
     // Main game loop
     while (!backend.should_close())    // Detect window close button or ESC key
@@ -48,9 +52,12 @@ int main()
         car.update_zadvance();
 
 
+        // NPC
+        car_npc.z_advance_cm += car_npc.get_zspeed();
+
+
         backend.begin_draw();
-        renderer.draw_ground(level, car.get_zadvance_m()-10);
-        renderer.draw_cars({car}, car.get_zadvance_m()-10);
+        renderer.draw(level, {car, car_npc}, car.get_zadvance_m()-10);
         backend.draw_car_info(car);
         backend.end_draw();
     }

@@ -16,6 +16,7 @@ struct Sprite {
     unsigned int x;
     unsigned int y;
     std::string image;
+    float scale = 1.;
 };
 
 #define GRAY       BackColor{ 130, 130, 130, 255 }   // Gray

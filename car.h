@@ -8,7 +8,6 @@ class Car
 public:
     Car(std::string image);
     std::string get_image() const;
-    float get_xdelta() const;
     void add_xdelta(float to_add);
     unsigned int get_zadvance_m() const;
     int get_zspeed() const;
@@ -17,12 +16,15 @@ public:
     int get_width() const;
     int get_height() const;
 
-private:
-    std::string m_image;
     float x_delta;
     unsigned int z_advance_cm;
-
     int z_speed;
+
+private:
+    std::string m_image;
+
+
+
     int width, height;
 };
 

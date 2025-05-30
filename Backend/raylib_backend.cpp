@@ -39,7 +39,7 @@ void RayLibBackend::draw_sprites(std::list<Sprite*> sprites) {
 }
 
 void RayLibBackend::draw_sprite(const Sprite* sprite) {
-    DrawTexture(getTexture(sprite->image), sprite->x, sprite->y, WHITE);
+    DrawTextureEx(getTexture(sprite->image), Vector2(sprite->x, sprite->y), 0., sprite->scale, WHITE);
 }
 
 void RayLibBackend::draw_rectangle(int posX, int posY, int width, int height, BackColor color) {

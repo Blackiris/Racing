@@ -6,10 +6,6 @@ std::string Car::get_image() const {
     return m_image;
 }
 
-float Car::get_xdelta() const {
-    return x_delta;
-}
-
 void Car::add_xdelta(float to_add) {
     x_delta += to_add;
 }

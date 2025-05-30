@@ -46,10 +46,9 @@ void RayLibBackend::draw_rectangle(int posX, int posY, int width, int height, Ba
     DrawRectangle(posX, posY, width, height, Color(color.r, color.g, color.b, color.a));
 }
 
-void RayLibBackend::draw_car_info(const Car& car) {
-    DrawText(("Speed: " + std::to_string(car.get_zspeed())).c_str(), 50, 20, 20, LIGHTGRAY);
+void RayLibBackend::draw_text(std::string text, int posX, int posY, int fontSize) {
+    DrawText(text.c_str(), posX, posY, fontSize, LIGHTGRAY);
 }
-
 
 
 Texture2D RayLibBackend::getTexture(const std::string &path) {
@@ -80,4 +79,8 @@ bool RayLibBackend::isKeyDown(const KeyName &keyname) {
     }
 
     return res;
+}
+
+float RayLibBackend::get_time() {
+    return GetTime();
 }

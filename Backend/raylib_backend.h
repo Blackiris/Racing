@@ -23,8 +23,9 @@ public:
     void draw_sprites(std::list<Sprite*> sprites) override;
     void draw_sprite(const Sprite* sprite) override;
     void draw_rectangle(int posX, int posY, int width, int height, BackColor color) override;
-    void draw_car_info(const Car& car) override;
+    void draw_text(std::string text, int posX, int posY, int fontSize) override;
     void close() override;
+    float get_time() override;
 
     bool isKeyDown(const KeyName &keyname) override;
 };

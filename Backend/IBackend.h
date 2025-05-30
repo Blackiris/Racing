@@ -41,8 +41,9 @@ public:
     virtual void draw_sprites(std::list<Sprite*> sprites) = 0;
     virtual void draw_sprite(const Sprite* sprite) = 0;
     virtual void draw_rectangle(int posX, int posY, int width, int height, BackColor color) = 0;
-    virtual void draw_car_info(const Car& car) = 0;
+    virtual void draw_text(std::string text, int posX, int posY, int fontSize) = 0;
     virtual void close() = 0;
+    virtual float get_time() = 0;
 
     virtual bool isKeyDown(const KeyName &keyname) = 0;
 

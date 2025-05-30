@@ -4,6 +4,7 @@
 #include "level.h"
 #include "levelutil.h"
 #include "renderer.h"
+#include <memory>
 
 using namespace std;
 
@@ -12,34 +13,53 @@ int main()
 {
     const int screenWidth = 640;
     const int screenHeight = 480;
+    const int lane_width = 150;
+    const int max_npc_distance = 700;
+    const int min_npc_distance = -200;
+    const int max_nb_npcs = 5;
 
     RayLibBackend backend = RayLibBackend();
     backend.init_window(screenWidth, screenHeight);
     Renderer renderer = Renderer(backend);
 
     Car car("resources/car.png");
-    Level level = Level(4, {
+    Level level = Level(4, 7000, {
         RoadSection(000, 0),
         RoadSection(300, 2),
         RoadSection(1000, 0),
         RoadSection(1500, -3),
         RoadSection(1800, 0),
         RoadSection(2500, 1),
+        RoadSection(3500, 4),
+        RoadSection(4000, 0),
+        RoadSection(6000, -2),
     });
 
-    Car car_npc("resources/car_npc.png");
-    car_npc.z_speed = 300;
-    car_npc.z_advance_cm = 10;
-    car_npc.x_delta = 70;
+    std::list<std::shared_ptr<Car>> npcs;
+
+
+    const int road_width = lane_width * level.nb_lanes;
+
+    float begin_time = backend.get_time();
+    float current_time, final_time;
+    bool win = false;
+
 
     // Main game loop
     while (!backend.should_close())    // Detect window close button or ESC key
     {
+        // Check win status
+        current_time = backend.get_time();
+        if (!win && car.get_zadvance_m() >= level.end_line_z) {
+            win = true;
+            final_time = current_time - begin_time;
+        }
+
         if (backend.isKeyDown(LEFT)) {
-            car.add_xdelta(-2);
+            car.add_xdelta(-3);
         }
         if (backend.isKeyDown(RIGHT)) {
-            car.add_xdelta(2);
+            car.add_xdelta(3);
         }
 
         if (backend.isKeyDown(UP)) {
@@ -48,18 +68,63 @@ int main()
         if (backend.isKeyDown(DOWN)) {
             car.add_zspeed(-3);
         }
+
+        // Curve
         RoadSection roadSection = LevelUtil::findRoadSection(level, car.get_zadvance_m());
         car.add_xdelta((float)-roadSection.angle*car.get_zspeed()/500);
         car.update_zadvance();
 
+        // Wind
+        float current_zspeed = car.get_zspeed();
+        car.add_zspeed(-0.000001*current_zspeed*current_zspeed);
+
+        // Grass
+        if (std::abs(car.x_delta) > road_width / 2) {
+            car.add_zspeed(-0.00004*current_zspeed*current_zspeed);
+        }
+
 
         // NPC
-        car_npc.z_advance_cm += car_npc.get_zspeed();
 
+        // Spawn NPC
+        if (npcs.size() < max_nb_npcs && rand()%100 < 3) {
+            int lane_nb = rand() % level.nb_lanes;
+            npcs.push_back(std::make_shared<Car>("resources/car_npc.png", 400+rand()%100,
+                                                 (car.get_zadvance_m()+max_npc_distance-rand() % 100)*100,
+                                                 (-road_width+lane_width)/2+lane_nb*lane_width));
+        }
+        npcs.remove_if([&car](auto npc){
+            long diff = (long)npc->get_zadvance_m()-car.get_zadvance_m();
+            return diff > max_npc_distance || diff < min_npc_distance;
+        });
+
+        for (auto npc: npcs) {
+            npc->z_advance_cm += npc->get_zspeed();
+
+            // Check collision
+            long diff_z = npc->get_zadvance_m() - car.get_zadvance_m();
+            int diff_x = std::abs(npc->x_delta - car.x_delta);
+            if (npc->get_zadvance_m() - car.get_zadvance_m()) {
+                if (diff_z > -15 && diff_z < 15 && diff_x < (npc->get_width() + car.get_width())/2) {
+                    car.add_zspeed(-50);
+                }
+            }
+        }
+
+        std::list<Car> all_cars({car});
+        for (auto npc: npcs) {
+            all_cars.push_back(*npc.get());
+        }
 
         backend.begin_draw();
-        renderer.draw(level, {car, car_npc}, car.get_zadvance_m()-10);
-        backend.draw_car_info(car);
+        renderer.draw(level, all_cars, car.get_zadvance_m()-10, lane_width);
+        renderer.draw_car_info(car);
+        std::string time_txt = "Time: " + std::to_string(win ? final_time : current_time-begin_time);
+        backend.draw_text(time_txt, 400, 20, 20);
+
+        if (win) {
+            backend.draw_text("You win!", 300, 200, 20);
+        }
         backend.end_draw();
     }
 

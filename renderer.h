@@ -4,7 +4,7 @@
 #include "Backend/IBackend.h"
 #include "level.h"
 
-#include <vector>
+#include <map>
 
 class Renderer
 {
@@ -19,11 +19,11 @@ private:
     int get_screeny_from_zground(const unsigned int &z_ground);
     float get_scale_from_zground(const unsigned int &z_ground);
 
-    void draw_ground(const Level& level, const unsigned int &cam_z_advance, const std::vector<float> &road_deltas);
-    void draw_cars(std::list<Car> cars, const unsigned int &cam_z_advance);
-    void draw_car(Car car, const unsigned int &cam_z_advance);
+    void draw_ground(const Level& level, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
+    void draw_cars(std::list<Car> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
+    void draw_car(Car car, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
 
-    std::vector<float> compute_road_deltas(const Level& level, const unsigned int &cam_z_advance);
+    std::map<int, float> compute_road_deltas(const Level& level, const unsigned int &cam_z_advance);
 };
 
 #endif // RENDERER_H

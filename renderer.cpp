@@ -1,7 +1,6 @@
 #include "renderer.h"
 #include "levelutil.h"
 
-
 int cam_dist_to_screen = 50;
 int max_dist_display_road = 600;
 int cam_height;
@@ -15,29 +14,29 @@ Renderer::Renderer(IBackend &backend): m_backend(backend) {
 }
 
 void Renderer::draw(const Level& level, std::list<Car> cars, const unsigned int &cam_z_advance) {
-    std::vector<float> road_deltas = compute_road_deltas(level, cam_z_advance);
+    std::map<int, float> road_deltas = compute_road_deltas(level, cam_z_advance);
     draw_ground(level, cam_z_advance, road_deltas);
-    draw_cars(cars, cam_z_advance);
+    draw_cars(cars, cam_z_advance, road_deltas);
 }
 
-void Renderer::draw_cars(std::list<Car> cars, const unsigned int &cam_z_advance) {
+void Renderer::draw_cars(std::list<Car> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
     for (Car car : cars) {
-        draw_car(car, cam_z_advance);
+        draw_car(car, cam_z_advance, road_deltas);
     }
 }
 
-void Renderer::draw_car(Car car, const unsigned int &cam_z_advance) {
+void Renderer::draw_car(Car car, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
     int z_ground = car.get_zadvance_m() - cam_z_advance;
-    if (z_ground > 0 && z_ground<max_dist_display_road + 10) {
+    if (z_ground > 0 && z_ground<max_dist_display_road) {
         int screen_y = get_screeny_from_zground(car.get_zadvance_m() - cam_z_advance);
         float scale = get_scale_from_zground(car.get_zadvance_m() - cam_z_advance);
-        Sprite car_sprite = Sprite(m_backend.screenWidth/2 + (car.x_delta - car.get_width()/2)*scale,
-                                   screen_y-car.get_height(), car.get_image(), scale);
+        Sprite car_sprite = Sprite(m_backend.screenWidth/2 + (car.x_delta - car.get_width()/2)*scale + road_deltas.at(screen_y),
+                                   screen_y-car.get_height()*scale, car.get_image(), scale);
         m_backend.draw_sprite(&car_sprite);
     }
 }
 
-std::vector<float> Renderer::compute_road_deltas(const Level& level, const unsigned int &cam_z_advance) {
+std::map<int, float> Renderer::compute_road_deltas(const Level& level, const unsigned int &cam_z_advance) {
     float road_delta = 0, previous_delta = 0, previous_section_delta = 0;
     float previous_delta_diff = 0, previous_section_delta_diff = 0;
 
@@ -45,7 +44,7 @@ std::vector<float> Renderer::compute_road_deltas(const Level& level, const unsig
     unsigned int previous_section_screen_y = m_backend.screenHeight;
     RoadSection previous_section;
 
-    std::vector<float> road_deltas;
+    std::map<int, float> road_deltas;
 
     for (unsigned int i = m_backend.screenHeight-1; i >= horizon_y; i--) {
         int h_screen_from_ground = m_backend.screenHeight - i;
@@ -68,7 +67,7 @@ std::vector<float> Renderer::compute_road_deltas(const Level& level, const unsig
         road_delta += previous_section_delta_diff * (previous_section_screen_y - i);
         road_delta += (float)section.angle*(z_begin_section*z_begin_section)/road_curve_constant;
 
-        road_deltas.push_back(road_delta);
+        road_deltas.insert({i, road_delta});
 
         previous_delta_diff = road_delta - previous_delta;
     }
@@ -76,7 +75,7 @@ std::vector<float> Renderer::compute_road_deltas(const Level& level, const unsig
     return road_deltas;
 }
 
-void Renderer::draw_ground(const Level& level, const unsigned int &z_advance, const std::vector<float> &road_deltas) {
+void Renderer::draw_ground(const Level& level, const unsigned int &z_advance, const std::map<int, float> &road_deltas) {
     m_backend.clear_background();
 
     unsigned int horizon_y = m_backend.screenHeight/2;
@@ -86,7 +85,7 @@ void Renderer::draw_ground(const Level& level, const unsigned int &z_advance, co
         int h_screen_from_ground = m_backend.screenHeight - i;
         int z_ground = cam_dist_to_screen*h_screen_from_ground / (cam_height-h_screen_from_ground);
 
-        draw_ground_line(level, z_advance, z_ground, i, road_deltas[m_backend.screenHeight-1-i]);
+        draw_ground_line(level, z_advance, z_ground, i, road_deltas.at(i));
     }
 }
 

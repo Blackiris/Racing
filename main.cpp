@@ -28,8 +28,9 @@ int main()
     });
 
     Car car_npc("resources/car_npc.png");
-    car_npc.z_speed = 30;
+    car_npc.z_speed = 300;
     car_npc.z_advance_cm = 10;
+    car_npc.x_delta = 70;
 
     // Main game loop
     while (!backend.should_close())    // Detect window close button or ESC key

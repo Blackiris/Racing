@@ -121,5 +121,5 @@ void Renderer::draw_ground_line(const Level& level, const unsigned int &cam_z_ad
 }
 
 void Renderer::draw_car_info(const Car& car) {
-    m_backend.draw_text("Speed: " + std::to_string(car.get_zspeed()), 50, 20, 20);
+    m_backend.draw_text("Speed: " + std::to_string((int)(car.get_zspeed()/4)) + " km/h", 50, 20, 20);
 }

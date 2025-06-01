@@ -47,7 +47,7 @@ void RayLibBackend::draw_rectangle(int posX, int posY, int width, int height, Ba
 }
 
 void RayLibBackend::draw_text(std::string text, int posX, int posY, int fontSize) {
-    DrawText(text.c_str(), posX, posY, fontSize, LIGHTGRAY);
+    DrawText(text.c_str(), posX, posY, fontSize, WHITE);
 }
 
 

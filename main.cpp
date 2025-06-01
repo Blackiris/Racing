@@ -4,10 +4,27 @@
 #include "level.h"
 #include "levelutil.h"
 #include "renderer.h"
+#include <format>
 #include <memory>
 
 using namespace std;
 
+void manage_npcs(Level level,
+                 const int lane_width,
+                 Car car,
+                 std::list<std::shared_ptr<Car>> &npcs,
+                 const int max_npc_distance,
+                 const int max_nb_npcs,
+                 const int road_width) {
+    if (npcs.size() < max_nb_npcs && rand() % 100 < 3) {
+        int lane_nb = rand() % level.nb_lanes;
+        npcs.push_back(
+            std::make_shared<Car>("resources/car_npc.png",
+                                  400 + rand() % 100,
+                                  (car.get_zadvance_m() + max_npc_distance - rand() % 100) * 100,
+                                  (-road_width + lane_width) / 2 + lane_nb * lane_width));
+    }
+}
 
 int main()
 {
@@ -17,13 +34,15 @@ int main()
     const int max_npc_distance = 700;
     const int min_npc_distance = -200;
     const int max_nb_npcs = 5;
+    const float coeff_wind = 0.000001;
+    const float coeff_grass = 0.00004;
 
     RayLibBackend backend = RayLibBackend();
     backend.init_window(screenWidth, screenHeight);
     Renderer renderer = Renderer(backend);
 
     Car car("resources/car.png");
-    Level level = Level(4, 7000, {
+    Level level = Level(4, 10000, {
         RoadSection(000, 0),
         RoadSection(300, 2),
         RoadSection(1000, 0),
@@ -33,6 +52,7 @@ int main()
         RoadSection(3500, 4),
         RoadSection(4000, 0),
         RoadSection(6000, -2),
+        RoadSection(7000, 0),
     });
 
     std::list<std::shared_ptr<Car>> npcs;
@@ -76,23 +96,18 @@ int main()
 
         // Wind
         float current_zspeed = car.get_zspeed();
-        car.add_zspeed(-0.000001*current_zspeed*current_zspeed);
+        car.add_zspeed(-coeff_wind*current_zspeed*current_zspeed);
 
         // Grass
-        if (std::abs(car.x_delta) > road_width / 2) {
-            car.add_zspeed(-0.00004*current_zspeed*current_zspeed);
+        if (std::abs(car.x_delta) > road_width / 2 + 10) {
+            car.add_zspeed(-coeff_grass*current_zspeed*current_zspeed);
         }
 
 
         // NPC
 
         // Spawn NPC
-        if (npcs.size() < max_nb_npcs && rand()%100 < 3) {
-            int lane_nb = rand() % level.nb_lanes;
-            npcs.push_back(std::make_shared<Car>("resources/car_npc.png", 400+rand()%100,
-                                                 (car.get_zadvance_m()+max_npc_distance-rand() % 100)*100,
-                                                 (-road_width+lane_width)/2+lane_nb*lane_width));
-        }
+        manage_npcs(level, lane_width, car, npcs, max_npc_distance, max_nb_npcs, road_width);
         npcs.remove_if([&car](auto npc){
             long diff = (long)npc->get_zadvance_m()-car.get_zadvance_m();
             return diff > max_npc_distance || diff < min_npc_distance;
@@ -119,7 +134,7 @@ int main()
         backend.begin_draw();
         renderer.draw(level, all_cars, car.get_zadvance_m()-10, lane_width);
         renderer.draw_car_info(car);
-        std::string time_txt = "Time: " + std::to_string(win ? final_time : current_time-begin_time);
+        std::string time_txt = "Time: " + std::format("{:.2f}", win ? final_time : current_time-begin_time) + " s";
         backend.draw_text(time_txt, 400, 20, 20);
 
         if (win) {

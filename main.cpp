@@ -7,7 +7,6 @@
 #include <format>
 #include <memory>
 
-using namespace std;
 
 void manage_npcs(Level level,
                  const int lane_width,

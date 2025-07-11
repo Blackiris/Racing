@@ -7,7 +7,7 @@ std::string Car::get_image() const {
     return m_image;
 }
 
-void Car::add_xdelta(float to_add) {
+void Car::add_xdelta(const float& to_add) {
     x_delta += to_add;
 }
 
@@ -15,7 +15,7 @@ float Car::get_zspeed() const {
     return z_speed;
 }
 
-void Car::add_zspeed(float to_add) {
+void Car::add_zspeed(const float& to_add) {
     z_speed += to_add;
     if (z_speed < 0) {
         z_speed = 0;

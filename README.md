@@ -1,5 +1,7 @@
 # Old-school racing game
 
+![Video demo](/Recording.gif?raw=true "Demo")
+
 # Goal
 Finish the race as fast as possible. Bumping on other cars or driving on grass will make you slower.
 

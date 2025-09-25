@@ -1,10 +1,10 @@
 #include "renderer.h"
 #include "levelutil.h"
 
-int cam_dist_to_screen = 50;
-int max_dist_display_road = 600;
+const int cam_dist_to_screen = 50;
+const int max_dist_display_road = 600;
 int cam_height;
-int road_curve_constant = 5000;
+const int road_curve_constant = 5000;
 
 
 

@@ -1,7 +1,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include <list>
+#include <vector>
 
 struct RoadSection {
     unsigned int z_begin = 0;
@@ -11,7 +11,7 @@ struct RoadSection {
 struct Level {
     unsigned int nb_lanes = 1;
     unsigned int end_line_z = 0;
-    std::list<RoadSection> road_sections;
+    std::vector<RoadSection> road_sections;
 };
 
 

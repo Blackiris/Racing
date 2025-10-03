@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(raylib 5.5 REQUIRED)
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 add_executable(Racing main.cpp
     Backend/IBackend.h
     Backend/raylib_backend.h Backend/raylib_backend.cpp

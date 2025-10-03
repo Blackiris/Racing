@@ -13,7 +13,7 @@ void manage_npcs(Level level,
                  Car car,
                  std::list<std::shared_ptr<Car>> &npcs,
                  const int max_npc_distance,
-                 const int max_nb_npcs,
+                 const unsigned max_nb_npcs,
                  const int road_width) {
     if (npcs.size() < max_nb_npcs && rand() % 100 < 3) {
         int lane_nb = rand() % level.nb_lanes;
@@ -23,6 +23,21 @@ void manage_npcs(Level level,
                                   (car.get_zadvance_m() + max_npc_distance - rand() % 100) * 100,
                                   (-road_width + lane_width) / 2 + lane_nb * lane_width));
     }
+}
+
+Level load_level() {
+    return Level(4, 10000, {
+           RoadSection(000, 0),
+           RoadSection(300, 2),
+           RoadSection(1000, 0),
+           RoadSection(1500, -3),
+           RoadSection(1800, 0),
+           RoadSection(2500, 1),
+           RoadSection(3500, 4),
+           RoadSection(4000, 0),
+           RoadSection(6000, -2),
+           RoadSection(7000, 0),
+       });
 }
 
 int main()
@@ -41,18 +56,7 @@ int main()
     Renderer renderer = Renderer(backend);
 
     Car car("resources/car.png");
-    Level level = Level(4, 10000, {
-        RoadSection(000, 0),
-        RoadSection(300, 2),
-        RoadSection(1000, 0),
-        RoadSection(1500, -3),
-        RoadSection(1800, 0),
-        RoadSection(2500, 1),
-        RoadSection(3500, 4),
-        RoadSection(4000, 0),
-        RoadSection(6000, -2),
-        RoadSection(7000, 0),
-    });
+    const Level level = load_level();
 
     std::list<std::shared_ptr<Car>> npcs;
 
@@ -112,7 +116,7 @@ int main()
             return diff > max_npc_distance || diff < min_npc_distance;
         });
 
-        for (auto npc: npcs) {
+        for (auto& npc: npcs) {
             npc->z_advance_cm += npc->get_zspeed();
 
             // Check collision
@@ -125,9 +129,9 @@ int main()
             }
         }
 
-        std::list<Car> all_cars({car});
+        std::list<Car*> all_cars({&car});
         for (auto npc: npcs) {
-            all_cars.push_back(*npc.get());
+            all_cars.push_back(npc.get());
         }
 
         backend.begin_draw();

@@ -12,25 +12,25 @@ Renderer::Renderer(IBackend &backend): m_backend(backend) {
     cam_height = (cam_dist_to_screen+max_dist_display_road) * (backend.screenHeight/2)/max_dist_display_road;
 }
 
-void Renderer::draw(const Level& level, std::list<Car> cars, const unsigned int &cam_z_advance, const int &lane_width) {
+void Renderer::draw(const Level& level, std::list<Car*> cars, const unsigned int &cam_z_advance, const int &lane_width) {
     std::map<int, float> road_deltas = compute_road_deltas(level, cam_z_advance);
     draw_ground(level, cam_z_advance, road_deltas, lane_width);
     draw_cars(cars, cam_z_advance, road_deltas);
 }
 
-void Renderer::draw_cars(std::list<Car> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
-    std::list<Car> z_ordered_cars = cars;
-    z_ordered_cars.sort( []( const Car &a, const Car &b ) { return a.z_advance_cm > b.z_advance_cm; } );
-    for (Car car : z_ordered_cars) {
-        draw_car(car, cam_z_advance, road_deltas);
+void Renderer::draw_cars(std::list<Car*> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
+    std::list<Car*> z_ordered_cars = cars;
+    z_ordered_cars.sort( []( const Car* a, const Car* b ) { return a->z_advance_cm > b->z_advance_cm; } );
+    for (Car* car : z_ordered_cars) {
+        draw_car(*car, cam_z_advance, road_deltas);
     }
 }
 
-void Renderer::draw_car(Car car, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
-    int z_ground = car.get_zadvance_m() - cam_z_advance;
+void Renderer::draw_car(const Car& car, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
+    const int z_ground = car.get_zadvance_m() - cam_z_advance;
     if (z_ground > 0 && z_ground<max_dist_display_road) {
-        int screen_y = get_screeny_from_zground(car.get_zadvance_m() - cam_z_advance);
-        float scale = get_scale_from_zground(car.get_zadvance_m() - cam_z_advance);
+        const int screen_y = get_screeny_from_zground(car.get_zadvance_m() - cam_z_advance);
+        const float scale = get_scale_from_zground(car.get_zadvance_m() - cam_z_advance);
         Sprite car_sprite = Sprite(m_backend.screenWidth/2 + (car.x_delta - car.get_width()/2)*scale + road_deltas.at(screen_y),
                                    screen_y-car.get_height()*scale, car.get_image(), scale);
         m_backend.draw_sprite(&car_sprite);

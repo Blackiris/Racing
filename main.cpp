@@ -5,23 +5,21 @@
 #include "levelutil.h"
 #include "renderer.h"
 #include <format>
-#include <memory>
 
 
-void manage_npcs(Level level,
+void manage_npcs(const Level &level,
                  const int lane_width,
-                 Car car,
-                 std::list<std::shared_ptr<Car>> &npcs,
+                 const Car &car,
+                 std::list<Car> &npcs,
                  const int max_npc_distance,
                  const unsigned max_nb_npcs,
                  const int road_width) {
     if (npcs.size() < max_nb_npcs && rand() % 100 < 3) {
         int lane_nb = rand() % level.nb_lanes;
-        npcs.push_back(
-            std::make_shared<Car>("resources/car_npc.png",
-                                  400 + rand() % 100,
-                                  (car.get_zadvance_m() + max_npc_distance - rand() % 100) * 100,
-                                  (-road_width + lane_width) / 2 + lane_nb * lane_width));
+        npcs.push_back(Car("resources/car_npc.png",
+                              400 + rand() % 100,
+                              (car.get_zadvance_m() + max_npc_distance - rand() % 100) * 100,
+                              (-road_width + lane_width) / 2 + lane_nb * lane_width));
     }
 }
 
@@ -58,7 +56,7 @@ int main()
     Car car("resources/car.png");
     const Level level = load_level();
 
-    std::list<std::shared_ptr<Car>> npcs;
+    std::list<Car> npcs;
 
 
     const int road_width = lane_width * level.nb_lanes;
@@ -112,26 +110,26 @@ int main()
         // Spawn NPC
         manage_npcs(level, lane_width, car, npcs, max_npc_distance, max_nb_npcs, road_width);
         npcs.remove_if([&car](auto npc){
-            long diff = (long)npc->get_zadvance_m()-car.get_zadvance_m();
+            long diff = (long)npc.get_zadvance_m()-car.get_zadvance_m();
             return diff > max_npc_distance || diff < min_npc_distance;
         });
 
         for (auto& npc: npcs) {
-            npc->z_advance_cm += npc->get_zspeed();
+            npc.z_advance_cm += npc.get_zspeed();
 
             // Check collision
-            long diff_z = npc->get_zadvance_m() - car.get_zadvance_m();
-            int diff_x = std::abs(npc->x_delta - car.x_delta);
-            if (npc->get_zadvance_m() - car.get_zadvance_m()) {
-                if (diff_z > -15 && diff_z < 15 && diff_x < (npc->get_width() + car.get_width())/2) {
+            long diff_z = npc.get_zadvance_m() - car.get_zadvance_m();
+            int diff_x = std::abs(npc.x_delta - car.x_delta);
+            if (npc.get_zadvance_m() - car.get_zadvance_m()) {
+                if (diff_z > -15 && diff_z < 15 && diff_x < (npc.get_width() + car.get_width())/2) {
                     car.add_zspeed(-50);
                 }
             }
         }
 
         std::list<Car*> all_cars({&car});
-        for (auto npc: npcs) {
-            all_cars.push_back(npc.get());
+        for (auto& npc: npcs) {
+            all_cars.push_back(&npc);
         }
 
         backend.begin_draw();

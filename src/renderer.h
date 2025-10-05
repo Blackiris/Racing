@@ -10,7 +10,7 @@ class Renderer
 {
 public:
     Renderer(IBackend &backend);
-    void draw(const Level& level, std::list<Car*> cars, const unsigned int &z_advance, const int &lane_width);
+    void draw(const Level& level, const std::list<Car*> &cars, const unsigned int &z_advance, const int &lane_width);
     void draw_car_info(const Car& car);
 
 private:
@@ -21,7 +21,7 @@ private:
     float get_scale_from_zground(const float &z_ground);
 
     void draw_ground(const Level& level, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas, const int &lane_width);
-    void draw_cars(std::list<Car*> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
+    void draw_cars(const std::list<Car*> &cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
     void draw_car(const Car& car, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas);
 
     std::map<int, float> compute_road_deltas(const Level& level, const unsigned int &cam_z_advance);

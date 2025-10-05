@@ -35,7 +35,7 @@ public:
     virtual void begin_draw() = 0;
     virtual void end_draw() = 0;
     virtual void clear_background() = 0;
-    virtual void draw_sprites(std::list<Sprite*> sprites) = 0;
+    virtual void draw_sprites(const std::list<Sprite*> &sprites) = 0;
     virtual void draw_sprite(const Sprite* sprite) = 0;
     virtual void draw_rectangle(int posX, int posY, int width, int height, BackColor color) = 0;
     virtual void draw_text(std::string text, int posX, int posY, int fontSize) = 0;
@@ -44,5 +44,5 @@ public:
 
     virtual bool isKeyDown(const KeyName &keyname) = 0;
 
-    unsigned int screenWidth, screenHeight;
+    unsigned int screenWidth = 0, screenHeight = 0;
 };

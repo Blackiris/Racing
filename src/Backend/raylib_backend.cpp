@@ -32,8 +32,8 @@ void RayLibBackend::close() {
 }
 
 
-void RayLibBackend::draw_sprites(std::list<Sprite*> sprites) {
-    for (Sprite* sprite: sprites) {
+void RayLibBackend::draw_sprites(const std::list<Sprite*> &sprites) {
+    for (const Sprite* sprite: sprites) {
         draw_sprite(sprite);
     }
 }

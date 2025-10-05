@@ -12,16 +12,16 @@ Renderer::Renderer(IBackend &backend): m_backend(backend) {
     cam_height = (cam_dist_to_screen+max_dist_display_road) * (backend.screenHeight/2)/max_dist_display_road;
 }
 
-void Renderer::draw(const Level& level, std::list<Car*> cars, const unsigned int &cam_z_advance, const int &lane_width) {
+void Renderer::draw(const Level& level, const std::list<Car*> &cars, const unsigned int &cam_z_advance, const int &lane_width) {
     std::map<int, float> road_deltas = compute_road_deltas(level, cam_z_advance);
     draw_ground(level, cam_z_advance, road_deltas, lane_width);
     draw_cars(cars, cam_z_advance, road_deltas);
 }
 
-void Renderer::draw_cars(std::list<Car*> cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
+void Renderer::draw_cars(const std::list<Car*> &cars, const unsigned int &cam_z_advance, const std::map<int, float> &road_deltas) {
     std::list<Car*> z_ordered_cars = cars;
     z_ordered_cars.sort( []( const Car* a, const Car* b ) { return a->z_advance_cm > b->z_advance_cm; } );
-    for (Car* car : z_ordered_cars) {
+    for (const Car* car : z_ordered_cars) {
         draw_car(*car, cam_z_advance, road_deltas);
     }
 }

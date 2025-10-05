@@ -1,5 +1,4 @@
-#ifndef LEVEL_H
-#define LEVEL_H
+#pragma once
 
 #include <vector>
 
@@ -13,6 +12,3 @@ struct Level {
     unsigned int end_line_z = 0;
     std::vector<RoadSection> road_sections;
 };
-
-
-#endif // LEVEL_H

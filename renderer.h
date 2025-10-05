@@ -1,7 +1,7 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#pragma once
 
 #include "Backend/IBackend.h"
+#include "car.h"
 #include "level.h"
 
 #include <map>
@@ -26,5 +26,3 @@ private:
 
     std::map<int, float> compute_road_deltas(const Level& level, const unsigned int &cam_z_advance);
 };
-
-#endif // RENDERER_H

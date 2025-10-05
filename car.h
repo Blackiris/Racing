@@ -1,5 +1,4 @@
-#ifndef CAR_H
-#define CAR_H
+#pragma once
 
 #include <string>
 
@@ -25,5 +24,3 @@ private:
     std::string m_image;
     int width, height;
 };
-
-#endif // CAR_H

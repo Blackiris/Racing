@@ -1,5 +1,4 @@
-#ifndef RAYLIB_BACKEND_H
-#define RAYLIB_BACKEND_H
+#pragma once
 
 #include "IBackend.h"
 #include "raylib.h"
@@ -29,5 +28,3 @@ public:
 
     bool isKeyDown(const KeyName &keyname) override;
 };
-
-#endif // RAYLIB_BACKEND_H

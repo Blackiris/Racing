@@ -1,12 +1,9 @@
-#ifndef IBACKEND_H
-#define IBACKEND_H
+#pragma once
 
 #include <cstdint>
 #include <list>
 #include <string>
 
-
-#include "../car.h"
 
 enum KeyName {
     UP, DOWN, LEFT, RIGHT
@@ -49,5 +46,3 @@ public:
 
     unsigned int screenWidth, screenHeight;
 };
-
-#endif // IBACKEND_H

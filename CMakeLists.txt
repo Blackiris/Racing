@@ -9,13 +9,13 @@ find_package(raylib 5.5 REQUIRED)
 
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
-add_executable(Racing main.cpp
-    Backend/IBackend.h
-    Backend/raylib_backend.h Backend/raylib_backend.cpp
-    car.h car.cpp
-    level.h
-    levelutil.h levelutil.cpp
-    renderer.h renderer.cpp )
+add_executable(Racing src/main.cpp
+    src/Backend/IBackend.h
+    src/Backend/raylib_backend.h src/Backend/raylib_backend.cpp
+    src/car.h src/car.cpp
+    src/level.h
+    src/levelutil.h src/levelutil.cpp
+    src/renderer.h src/renderer.cpp )
 target_link_libraries(${PROJECT_NAME} raylib)
 
 include(GNUInstallDirs)

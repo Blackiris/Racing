@@ -1,12 +1,12 @@
 #include "levelutil.h"
 
-RoadSection LevelUtil::findRoadSection(const Level &level, const unsigned int &z) {
-    RoadSection section = level.road_sections.front();
+const RoadSection& LevelUtil::find_road_section(const Level &level, const unsigned int &z) {
+    size_t idx = 0;
     for (RoadSection current_section : level.road_sections) {
         if (current_section.z_begin > z) {
             break;
         }
-        section = current_section;
+        idx++;
     }
-    return section;
+    return level.road_sections[idx-1];
 }

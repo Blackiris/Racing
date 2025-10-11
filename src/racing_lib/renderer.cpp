@@ -51,7 +51,7 @@ std::map<int, float> Renderer::compute_road_deltas(const Level& level, const uns
         int h_screen_from_ground = m_backend.screenHeight - i;
         int z_ground = cam_dist_to_screen*h_screen_from_ground / (cam_height-h_screen_from_ground);
         int z_ground_absolute = z_ground + cam_z_advance;
-        RoadSection section = LevelUtil::findRoadSection(level, z_ground_absolute);
+        RoadSection section = LevelUtil::find_road_section(level, z_ground_absolute);
         if (previous_section.z_begin != section.z_begin) {
             previous_section = section;
             previous_section_delta = road_delta;

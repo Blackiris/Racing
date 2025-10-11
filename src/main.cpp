@@ -91,7 +91,7 @@ int main()
         }
 
         // Curve
-        RoadSection roadSection = LevelUtil::findRoadSection(level, car.get_zadvance_m());
+        RoadSection roadSection = LevelUtil::find_road_section(level, car.get_zadvance_m());
         car.add_xdelta((float)-roadSection.angle*car.get_zspeed()/500);
         car.update_zadvance();
 

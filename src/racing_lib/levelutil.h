@@ -4,5 +4,5 @@
 
 namespace LevelUtil
 {
-RoadSection findRoadSection(const Level &level, const unsigned int &z);
+const RoadSection& find_road_section(const Level &level, const unsigned int &z);
 };

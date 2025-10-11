@@ -1,9 +1,9 @@
 
 #include "Backend/raylib_backend.h"
-#include "car.h"
-#include "level.h"
-#include "levelutil.h"
-#include "renderer.h"
+#include "racing_lib/car.h"
+#include "racing_lib/level.h"
+#include "racing_lib/levelutil.h"
+#include "racing_lib/renderer.h"
 #include <format>
 
 
@@ -121,7 +121,7 @@ int main()
             long diff_z = npc.get_zadvance_m() - car.get_zadvance_m();
             int diff_x = std::abs(npc.x_delta - car.x_delta);
             if (npc.get_zadvance_m() - car.get_zadvance_m()) {
-                if (diff_z > -15 && diff_z < 15 && diff_x < (npc.get_width() + car.get_width())/2) {
+                if (diff_z > -15 && diff_z < 15 && diff_x < (npc.width + car.width)/2) {
                     car.add_zspeed(-50);
                 }
             }

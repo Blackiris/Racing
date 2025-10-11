@@ -31,8 +31,8 @@ void Renderer::draw_car(const Car& car, const unsigned int &cam_z_advance, const
     if (z_ground > 0 && z_ground<max_dist_display_road) {
         const int screen_y = get_screeny_from_zground(car.get_zadvance_m() - cam_z_advance);
         const float scale = get_scale_from_zground(car.get_zadvance_m() - cam_z_advance);
-        Sprite car_sprite = Sprite(m_backend.screenWidth/2 + (car.x_delta - car.get_width()/2)*scale + road_deltas.at(screen_y),
-                                   screen_y-car.get_height()*scale, car.get_image(), scale);
+        Sprite car_sprite = Sprite(m_backend.screenWidth/2 + (car.x_delta - car.width/2)*scale + road_deltas.at(screen_y),
+                                   screen_y-car.height*scale, car.get_image(), scale);
         m_backend.draw_sprite(&car_sprite);
     }
 }

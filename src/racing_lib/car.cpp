@@ -1,8 +1,8 @@
 #include "car.h"
 
 
-Car::Car(std::string image) noexcept: x_delta(0), z_advance_cm(1000), z_speed(0), m_image(image), width(80), height(41) {}
-Car::Car(std::string image, const int &z_speed, const int &z_advance_cm, const float &xdelta) noexcept: x_delta(xdelta), z_advance_cm(z_advance_cm), z_speed(z_speed), m_image(image), width(80), height(41) {}
+Car::Car(const std::string& image) noexcept: x_delta(0), z_advance_cm(1000), z_speed(0), width(80), height(41), m_image(image) {}
+Car::Car(const std::string& image, const int &z_speed, const int &z_advance_cm, const float &xdelta) noexcept: x_delta(xdelta), z_advance_cm(z_advance_cm), z_speed(z_speed), width(80), height(41), m_image(image) {}
 
 
 
@@ -31,12 +31,4 @@ unsigned int Car::get_zadvance_m() const noexcept {
 
 void Car::update_zadvance() {
     z_advance_cm += z_speed;
-}
-
-int Car::get_width() const noexcept {
-    return width;
-}
-
-int Car::get_height() const noexcept {
-    return height;
 }
